@@ -5,6 +5,7 @@ Serviço para gerenciamento de tokens JWT e refresh tokens
 import jwt
 import hashlib
 import secrets
+from uuid import UUID
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
@@ -95,7 +96,9 @@ class TokenService:
             refresh_token_hash=refresh_token_hash,
         )
 
-    def refresh_token(self, refresh_token: str) -> Optional[AccessTokenResult]:
+    def refresh_token(
+        self, refresh_token: str, current_access_token: str = None
+    ) -> Optional[AccessTokenResult]:
         """Renova apenas o access token usando o refresh token"""
         try:
             # Decodificar o refresh token
@@ -119,25 +122,39 @@ class TokenService:
                     session.execute(
                         update(sessions)
                         .where(
-                            (sessions.c.user_uuid == user_uuid)
+                            (sessions.c.user_uuid == UUID(user_uuid))
                             & (sessions.c.refresh_token == refresh_token_hash)
                         )
                         .values(revoked=True)
                     )
                 return None
 
+            # Decodificar o access token atual para obter o valor interno
+            current_access_token_hash = None
+            current_access_payload = self.decode_token(
+                current_access_token, verify_exp=False
+            )
+
+            current_access_token_value = current_access_payload.get("access_token")
+            if current_access_token_value:
+                current_access_token_hash = self.hash_token(current_access_token_value)
+
             # Gerar novo par de tokens e usar apenas o access token
             token_pair = self.generate_token_pair(user_uuid)
 
             # Atualizar apenas o access token na sessão
             with get_session() as session:
+                # Construir a condição WHERE base
+                where_condition = (
+                    (sessions.c.user_uuid == UUID(user_uuid))
+                    & (sessions.c.refresh_token == refresh_token_hash)
+                    & (sessions.c.access_token == current_access_token_hash)
+                    & (sessions.c.revoked.is_(False))
+                )
+
                 result = session.execute(
                     update(sessions)
-                    .where(
-                        (sessions.c.user_uuid == user_uuid)
-                        & (sessions.c.refresh_token == refresh_token_hash)
-                        & (sessions.c.revoked == False)
-                    )
+                    .where(where_condition)
                     .values(
                         access_token=token_pair.access_token_hash,
                         access_token_expires_at=token_pair.access_token_expires_at,

@@ -38,9 +38,9 @@ def get_settings() -> Settings:
         ),
         salt=os.getenv("SALT", "your-salt-change-in-production"),
         access_token_expires_minutes=int(
-            os.getenv("ACCESS_TOKEN_EXPIRES_MINUTES", "15")
+            os.getenv("ACCESS_TOKEN_EXPIRES_MINUTES", "2")
         ),
-        refresh_token_expires_days=int(os.getenv("REFRESH_TOKEN_EXPIRES_DAYS", "7")),
+        refresh_token_expires_days=int(os.getenv("REFRESH_TOKEN_EXPIRES_DAYS", "1")),
         cors_origins=os.getenv("CORS_ORIGINS", "*").split(","),
         host=os.getenv("HOST", "0.0.0.0"),
         port=int(os.getenv("PORT", "8000")),

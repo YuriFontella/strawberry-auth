@@ -1,3 +1,4 @@
+from uuid import UUID
 from strawberry.types import Info
 from strawberry.permission import BasePermission
 from fastapi import Request, Response
@@ -60,7 +61,7 @@ class IsAuthenticated(BasePermission):
                     )
 
                 # Tentar renovar access token
-                new_access_token = token_service.refresh_token(refresh_token)
+                new_access_token = token_service.refresh_token(refresh_token, access_token)
                 if not new_access_token:
                     return handle_token_failure("Failed to refresh token")
 
@@ -82,13 +83,13 @@ class IsAuthenticated(BasePermission):
 
             user_uuid = payload.get("uuid")
             if not user_uuid:
-                self.message = "Invalid token payload"
+                self.message = "Invalid uuid token payload"
                 return False
 
             # Gerar hash do access_token usando o serviço
             access_token_value = payload.get("access_token")
             if not access_token_value:
-                self.message = "Invalid token payload"
+                self.message = "Invalid access token payload"
                 return False
 
             access_token_hash = token_service.hash_token(access_token_value)
@@ -110,10 +111,10 @@ class IsAuthenticated(BasePermission):
                         users.join(sessions, users.c.uuid == sessions.c.user_uuid)
                     )
                     .where(
-                        (users.c.uuid == user_uuid)
+                        (users.c.uuid == UUID(user_uuid))
                         & (sessions.c.access_token == access_token_hash)
-                        & (sessions.c.revoked == False)
-                        & (users.c.status == True)
+                        & (sessions.c.revoked.is_(False))
+                        & (users.c.status.is_(True))
                     )
                 )
                 result = session.execute(base_query).fetchone()
