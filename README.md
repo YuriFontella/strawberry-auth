@@ -1,4 +1,4 @@
-# API GraphQL - Outlive
+# API GraphQL - Auth
 
 ## Instalação
 
