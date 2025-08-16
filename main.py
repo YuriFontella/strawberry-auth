@@ -38,6 +38,7 @@ def create_app() -> FastAPI:
             GRAPHQL_TRANSPORT_WS_PROTOCOL,
             GRAPHQL_WS_PROTOCOL,
         ],
+        allow_queries_via_get=False
     )
 
     # Aplicação
