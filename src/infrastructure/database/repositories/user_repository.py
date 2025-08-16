@@ -1,6 +1,5 @@
 import bcrypt
 from sqlalchemy import select, insert, update
-from typing import Dict, Any
 from dataclasses import dataclass
 from src.domain.repositories.user_repository import UserRepository
 from src.domain.services.token_service import TokenService
@@ -8,7 +7,7 @@ from src.infrastructure.database.models import users, sessions
 from src.infrastructure.database.session import get_session
 from src.domain.entities.user import User
 from src.domain.entities.session import Session
-
+from src.domain.entities.auth_login_response import AuthLoginResponse
 
 @dataclass
 class SQLAlchemyUserRepository(UserRepository):
@@ -43,7 +42,7 @@ class SQLAlchemyUserRepository(UserRepository):
 
     def auth_login(
         self, email: str, password: str, user_agent: str, ip: str
-    ) -> Dict[str, Any]:
+    ) -> AuthLoginResponse:
         with get_session() as session:
             # Verificar se o usuário existe e está ativo
             user_record = session.execute(
@@ -100,12 +99,12 @@ class SQLAlchemyUserRepository(UserRepository):
             }
             session.execute(insert(sessions).values(**session_data))
 
-            return {
-                "access_token": token_pair.access_token,
-                "refresh_token": token_pair.refresh_token,
-                "access_token_expires_at": token_pair.access_token_expires_at,
-                "refresh_token_expires_at": token_pair.refresh_token_expires_at,
-            }
+            return AuthLoginResponse(
+                access_token=token_pair.access_token,
+                refresh_token=token_pair.refresh_token,
+                access_token_expires_at=token_pair.access_token_expires_at,
+                refresh_token_expires_at=token_pair.refresh_token_expires_at,
+            )
 
     def revoke_session(self, refresh_token: str) -> bool:
         with get_session() as session:

@@ -13,27 +13,8 @@ from sqlalchemy import update
 
 from src.infrastructure.database.session import get_session
 from src.infrastructure.database.models import sessions
-
-
-@dataclass
-class TokenPair:
-    """Par de tokens (access + refresh)"""
-
-    access_token: str
-    refresh_token: str
-    access_token_expires_at: datetime
-    refresh_token_expires_at: datetime
-    access_token_hash: str
-    refresh_token_hash: str
-
-
-@dataclass
-class AccessTokenResult:
-    """Resultado da criação de um novo access token"""
-
-    access_token_jwt: str
-    access_token_hash: str
-    access_expires_at: datetime
+from src.domain.entities.token_pair import TokenPair
+from src.domain.entities.access_token_result import AccessTokenResult
 
 
 @dataclass

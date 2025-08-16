@@ -56,7 +56,7 @@ class UserMutation:
         # Definir cookies de sessão (sem max_age)
         response.set_cookie(
             key="x-access-token",
-            value=result["access_token"],
+            value=result.access_token,
             # max_age = cookie de sessão
             httponly=True,
             secure=False,
@@ -65,7 +65,7 @@ class UserMutation:
 
         response.set_cookie(
             key="x-refresh-token",
-            value=result["refresh_token"],
+            value=result.refresh_token,
             # max_age = cookie de sessão
             httponly=True,
             secure=False,
