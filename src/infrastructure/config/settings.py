@@ -11,13 +11,14 @@ class Settings:
 
     jwt_secret_key: str
     salt: str
-    access_token_expires_minutes: int
-    refresh_token_expires_days: int
+    access_token_expires_minutes: int = 15
+    refresh_token_expires_days: int = 7
     debug: bool = False
     cors_origins: list = None
     host: str = "0.0.0.0"
     port: int = 8000
     reload: bool = True
+    production: bool = False
 
     def __post_init__(self):
         if self.cors_origins is None:
@@ -32,17 +33,18 @@ def get_database_url() -> str:
 def get_settings() -> Settings:
     """Obtém as configurações da aplicação"""
     return Settings(
-        debug=os.getenv("DEBUG", "True").lower() == "true",
+        debug=os.getenv("DEBUG").lower() == "true",
         jwt_secret_key=os.getenv(
-            "JWT_SECRET_KEY", "your-secret-key-change-in-production"
+            "JWT_SECRET_KEY", "your_default_jwt_secret_key"
         ),
-        salt=os.getenv("SALT", "your-salt-change-in-production"),
+        salt=os.getenv("SALT", "your_default_salt"),
         access_token_expires_minutes=int(
-            os.getenv("ACCESS_TOKEN_EXPIRES_MINUTES", "2")
+            os.getenv("ACCESS_TOKEN_EXPIRES_MINUTES")
         ),
-        refresh_token_expires_days=int(os.getenv("REFRESH_TOKEN_EXPIRES_DAYS", "1")),
+        refresh_token_expires_days=int(os.getenv("REFRESH_TOKEN_EXPIRES_DAYS")),
         cors_origins=os.getenv("CORS_ORIGINS", "*").split(","),
-        host=os.getenv("HOST", "0.0.0.0"),
-        port=int(os.getenv("PORT", "8000")),
-        reload=os.getenv("RELOAD", "True").lower() == "true",
+        host=os.getenv("HOST"),
+        port=int(os.getenv("PORT")),
+        reload=os.getenv("RELOAD").lower() == "true",
+        production=os.getenv("PRODUCTION").lower() == "true",
     )

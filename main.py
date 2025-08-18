@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from typing import Literal
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -20,9 +21,6 @@ def create_app() -> FastAPI:
     # Container de dependências
     container = Container()
 
-    # Criar tabelas do banco
-    create_tables()
-
     # Schema GraphQL
     schema = create_schema()
 
@@ -38,11 +36,12 @@ def create_app() -> FastAPI:
             GRAPHQL_TRANSPORT_WS_PROTOCOL,
             GRAPHQL_WS_PROTOCOL,
         ],
-        allow_queries_via_get=False
+        allow_queries_via_get=False,
+        graphql_ide=None if settings.production else Literal["playground"],
     )
 
     # Aplicação
-    fastapi = FastAPI(debug=settings.debug)
+    fastapi = FastAPI(debug=settings.debug, on_startup=[create_tables])
 
     # Configuração CORS
     fastapi.add_middleware(

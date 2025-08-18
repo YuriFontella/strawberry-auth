@@ -20,5 +20,5 @@ def create_schema() -> strawberry.Schema:
         query=Query,
         mutation=Mutation,
         subscription=Subscription,
-        config=StrawberryConfig(auto_camel_case=False),
+        config=StrawberryConfig(auto_camel_case=False, relay_max_results=5)
     )
