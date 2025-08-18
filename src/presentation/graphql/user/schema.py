@@ -60,7 +60,7 @@ class UserMutation:
             # max_age = cookie de sessão
             httponly=True,
             secure=False,
-            samesite="lax",
+            samesite="strict",
         )
 
         response.set_cookie(
@@ -69,7 +69,7 @@ class UserMutation:
             # max_age = cookie de sessão
             httponly=True,
             secure=False,
-            samesite="lax",
+            samesite="strict",
         )
 
         return True
