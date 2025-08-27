@@ -2,10 +2,32 @@
 
 ## Instalação
 
+### Instalar Poetry
+
+**Linux, macOS, Windows (WSL):**
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+**Windows (PowerShell):**
+```powershell
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+```
+
+### Instalar dependências
+
 Instale os pacotes necessários:
 
 ```bash
-pip install -r requirements.txt
+poetry install
+```
+
+### Configurar pre-commit
+
+Configure os hooks do pre-commit:
+
+```bash
+pre-commit install --config pre-commit.yaml
 ```
 
 ## Execução
