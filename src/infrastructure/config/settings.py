@@ -34,13 +34,9 @@ def get_settings() -> Settings:
     """Obtém as configurações da aplicação"""
     return Settings(
         debug=os.getenv("DEBUG").lower() == "true",
-        jwt_secret_key=os.getenv(
-            "JWT_SECRET_KEY", "your_default_jwt_secret_key"
-        ),
+        jwt_secret_key=os.getenv("JWT_SECRET_KEY", "your_default_jwt_secret_key"),
         salt=os.getenv("SALT", "your_default_salt"),
-        access_token_expires_minutes=int(
-            os.getenv("ACCESS_TOKEN_EXPIRES_MINUTES")
-        ),
+        access_token_expires_minutes=int(os.getenv("ACCESS_TOKEN_EXPIRES_MINUTES")),
         refresh_token_expires_days=int(os.getenv("REFRESH_TOKEN_EXPIRES_DAYS")),
         cors_origins=os.getenv("CORS_ORIGINS", "*").split(","),
         host=os.getenv("HOST"),

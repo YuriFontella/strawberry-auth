@@ -1,5 +1,5 @@
 import bcrypt
-from sqlalchemy import select, insert, update
+from sqlalchemy import select, insert, update, column
 from dataclasses import dataclass
 from src.domain.repositories.user_repository import UserRepository
 from src.domain.services.token_service import TokenService
@@ -8,6 +8,7 @@ from src.infrastructure.database.session import get_session
 from src.domain.entities.user import User
 from src.domain.entities.session import Session
 from src.domain.entities.auth_login_response import AuthLoginResponse
+
 
 @dataclass
 class SQLAlchemyUserRepository(UserRepository):
@@ -19,7 +20,7 @@ class SQLAlchemyUserRepository(UserRepository):
         with get_session() as session:
             # Verificar se o e-mail já existe
             existing_user = session.execute(
-                select(users).where(users.c.email == user.email)
+                select(users).where(column("email") == user.email)
             ).fetchone()
 
             if existing_user:
@@ -46,7 +47,7 @@ class SQLAlchemyUserRepository(UserRepository):
         with get_session() as session:
             # Verificar se o usuário existe e está ativo
             user_record = session.execute(
-                select(users).where(users.c.email == email, users.c.status == True)
+                select(users).where(column("email") == email, users.c.status.is_(True))
             ).fetchone()
 
             if not user_record:
@@ -63,7 +64,7 @@ class SQLAlchemyUserRepository(UserRepository):
                 update(sessions)
                 .where(
                     (sessions.c.user_uuid == user_record.uuid)
-                    & (sessions.c.revoked == False)
+                    & (sessions.c.revoked.is_(False))
                 )
                 .values(revoked=True)
             )
@@ -125,7 +126,7 @@ class SQLAlchemyUserRepository(UserRepository):
                 # Revogar a sessão específica
                 result = session.execute(
                     update(sessions)
-                    .where(sessions.c.refresh_token == refresh_token_hash)
+                    .where(column("refresh_token") == refresh_token_hash)
                     .values(revoked=True)
                 )
 

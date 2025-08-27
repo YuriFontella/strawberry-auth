@@ -61,7 +61,9 @@ class IsAuthenticated(BasePermission):
                     )
 
                 # Tentar renovar access token
-                new_access_token = token_service.refresh_token(refresh_token, access_token)
+                new_access_token = token_service.refresh_token(
+                    refresh_token, access_token
+                )
                 if not new_access_token:
                     return handle_token_failure("Failed to refresh token")
 

@@ -13,17 +13,10 @@ class UserResolvers:
         return self.user_use_cases.create_user(user)
 
     def auth_login(
-        self,
-        email: str,
-        password: str,
-        user_agent: str,
-        ip: str
+        self, email: str, password: str, user_agent: str, ip: str
     ) -> Dict[str, Any]:
         return self.user_use_cases.auth_login(
-            email=email,
-            password=password,
-            user_agent=user_agent,
-            ip=ip
+            email=email, password=password, user_agent=user_agent, ip=ip
         )
 
     def revoke_session(self, refresh_token: str) -> bool:
