@@ -22,6 +22,20 @@ Instale os pacotes necessários:
 poetry install
 ```
 
+### Ambiente virtual
+
+Plugin de shell do Poetry:
+
+```bash
+poetry self add poetry-plugin-shell
+```
+
+Entrar no ambiente virtual do projeto:
+
+```bash
+poetry shell
+```
+
 ### Configurar pre-commit
 
 Configure os hooks do pre-commit:

@@ -26,8 +26,9 @@ package-mode = false
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
-ruff = "^0.12.10"
+ruff = "^0.12.11"
 pre-commit = "^4.3.0"
+poetry-core = "^2.0.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
